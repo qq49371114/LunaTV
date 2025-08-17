@@ -4,8 +4,8 @@ name: clone
 on:
   schedule:
   #  - cron: 0 19 * * * #每天在国际标准时间19点(北京时间+8，即 03:00)
-    - cron: '5 */4 * * *'
-  # - cron: '0 17,1,9 * * *'
+    - cron: '5 */4 * * *' #每4小时第五分钟运行
+  # - cron: '0 17,1,9 * * *' #每天17,1,9点运行
   workflow_dispatch:
 
 jobs:
