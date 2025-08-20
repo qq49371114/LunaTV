@@ -67,6 +67,8 @@
 
 ## 部署
 
+本项目为防盗卖触发商业行为造成合规风险，采用一机一码的形式，授权码需要在 [自助授权机器人](https://t.me/moontv_auth_bot) 处申请，授权码和 tg 号绑定
+
 本项目**仅支持 Docker 或其他基于 Docker 的平台** 部署。
 
 ### Kvrocks 存储（推荐）
@@ -84,6 +86,7 @@ services:
       - PASSWORD=admin_password
       - NEXT_PUBLIC_STORAGE_TYPE=kvrocks
       - KVROCKS_URL=redis://moontv-kvrocks:6666
+      - AUTH_TOKEN={授权码}
     networks:
       - moontv-network
     depends_on:
@@ -118,6 +121,7 @@ services:
       - PASSWORD=admin_password
       - NEXT_PUBLIC_STORAGE_TYPE=redis
       - REDIS_URL=redis://moontv-redis:6379
+      - AUTH_TOKEN={授权码}
     networks:
       - moontv-network
     depends_on:
@@ -155,6 +159,7 @@ services:
       - NEXT_PUBLIC_STORAGE_TYPE=upstash
       - UPSTASH_URL={上面 https 开头的 HTTPS ENDPOINT}
       - UPSTASH_TOKEN={上面的 TOKEN}
+      - AUTH_TOKEN={授权码}
 ```
 
 ## 配置文件
@@ -214,8 +219,9 @@ dockge/komodo 等 docker compose UI 也有自动更新功能
 
 | 变量                                | 说明                                         | 可选值                           | 默认值                                                                                                                     |
 | ----------------------------------- | -------------------------------------------- | -------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| USERNAME                            | 非 localstorage 部署时的管理员账号           | 任意字符串                       | 无默认，必填字段                                                                                                                     |
-| PASSWORD                            | 非 localstorage 部署时为管理员密码           | 任意字符串                       | 无默认，必填字段                                                                                                                     |
+| USERNAME                            | 站长账号           | 任意字符串                       | 无默认，必填字段                                                                                                                     |
+| PASSWORD                            | 站长密码           | 任意字符串                       | 无默认，必填字段                                                                                                                     |
+| AUTH_TOKEN                          | 授权码             | 请从 [自助授权机器人](https://t.me/moontv_auth_bot) 处申请                        | 无默认，必填字段                                                                                                                     |
 | NEXT_PUBLIC_SITE_NAME               | 站点名称                                     | 任意字符串                       | MoonTV                                                                                                                     |
 | ANNOUNCEMENT                        | 站点公告                                     | 任意字符串                       | 本网站仅提供影视信息搜索服务，所有内容均来自第三方网站。本站不存储任何视频资源，不对任何内容的准确性、合法性、完整性负责。 |
 | NEXT_PUBLIC_STORAGE_TYPE            | 播放记录/收藏的存储方式                      | redis、kvrocks、upstash | 无默认，必填字段                                                                                                               |
