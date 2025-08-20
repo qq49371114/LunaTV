@@ -37,7 +37,7 @@
   <img src="public/screenshot3.png" alt="项目截图" style="max-width:600px">
 </details>
 
-### 请不要在 B站、小红书、微信公众号、抖音、今日头条或其他中国大陆社交平台发布视频或文章宣传本项目。[耻辱榜](https://github.com/MoonTechLab/LunaTV/issues/19)
+### 请不要在 B站、小红书、微信公众号、抖音、今日头条或其他中国大陆社交平台发布视频或文章宣传本项目，不授权任何“科技周刊/月刊”类项目或站点收录本项目。[耻辱榜](https://github.com/MoonTechLab/LunaTV/issues/19)
 
 本项目为空项目，请勿 fork，喜欢可点 star
 
@@ -86,7 +86,7 @@ services:
       - PASSWORD=admin_password
       - NEXT_PUBLIC_STORAGE_TYPE=kvrocks
       - KVROCKS_URL=redis://moontv-kvrocks:6666
-      - AUTH_TOKEN={授权码}
+      - AUTH_TOKEN=授权码
     networks:
       - moontv-network
     depends_on:
@@ -106,7 +106,7 @@ volumes:
   kvrocks-data:
 ```
 
-### Redis 存储
+### Redis 存储（有一定的丢数据风险）
 
 ```yml
 services:
@@ -121,7 +121,7 @@ services:
       - PASSWORD=admin_password
       - NEXT_PUBLIC_STORAGE_TYPE=redis
       - REDIS_URL=redis://moontv-redis:6379
-      - AUTH_TOKEN={授权码}
+      - AUTH_TOKEN=授权码
     networks:
       - moontv-network
     depends_on:
@@ -157,9 +157,9 @@ services:
       - USERNAME=admin
       - PASSWORD=admin_password
       - NEXT_PUBLIC_STORAGE_TYPE=upstash
-      - UPSTASH_URL={上面 https 开头的 HTTPS ENDPOINT}
-      - UPSTASH_TOKEN={上面的 TOKEN}
-      - AUTH_TOKEN={授权码}
+      - UPSTASH_URL=上面 https 开头的 HTTPS ENDPOINT
+      - UPSTASH_TOKEN=上面的 TOKEN
+      - AUTH_TOKEN=授权码
 ```
 
 ## 配置文件
@@ -229,7 +229,6 @@ dockge/komodo 等 docker compose UI 也有自动更新功能
 | REDIS_URL                           | redis 连接 url                               | 连接 url                         | 空                                                                                                                         |
 | UPSTASH_URL                         | upstash redis 连接 url                       | 连接 url                         | 空                                                                                                                         |
 | UPSTASH_TOKEN                       | upstash redis 连接 token                     | 连接 token                       | 空                                                                                                                         |
-| NEXT_PUBLIC_ENABLE_REGISTER         | 是否开放注册，仅在非 localstorage 部署时生效 | true / false                     | false                                                                                                                      |
 | NEXT_PUBLIC_SEARCH_MAX_PAGE         | 搜索接口可拉取的最大页数                     | 1-50                             | 5                                                                                                                          |
 | NEXT_PUBLIC_DOUBAN_PROXY_TYPE       | 豆瓣数据源请求方式                           | 见下方                           | melody-cdn-sharon                                                                                                                     |
 | NEXT_PUBLIC_DOUBAN_PROXY            | 自定义豆瓣数据代理 URL                       | url prefix                       | (空)                                                                                                                       |
