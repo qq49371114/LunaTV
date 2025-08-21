@@ -78,7 +78,7 @@ services:
   moontv-core:
     image: ghcr.io/moontechlab/lunatv:latest
     container_name: moontv-core
-    restart: unless-stopped
+    restart: on-failure
     ports:
       - '3000:3000'
     environment:
@@ -113,7 +113,7 @@ services:
   moontv-core:
     image: ghcr.io/moontechlab/lunatv:latest
     container_name: moontv-core
-    restart: unless-stopped
+    restart: on-failure
     ports:
       - '3000:3000'
     environment:
@@ -150,7 +150,7 @@ services:
   moontv-core:
     image: ghcr.io/moontechlab/lunatv:latest
     container_name: moontv-core
-    restart: unless-stopped
+    restart: on-failure
     ports:
       - '3000:3000'
     environment:
