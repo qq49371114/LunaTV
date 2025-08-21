@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  REGISTRY_IMAGE: moontechlab/lunatv
+  REGISTRY_IMAGE: qq49371114/lunatv
 
 permissions:
   contents: write
@@ -67,7 +67,7 @@ jobs:
           )" >> $GITHUB_ENV
 
       - name: Get commit SHA
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/moontv'
         id: vars
         run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
