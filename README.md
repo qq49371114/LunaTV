@@ -295,3 +295,7 @@ NEXT_PUBLIC_DOUBAN_IMAGE_PROXY_TYPE 选项解释：
 - [Zwei](https://github.com/bestzwei) — 提供获取豆瓣数据的 cors proxy
 - [CMLiussss](https://github.com/cmliu) — 提供豆瓣 CDN 服务
 - 感谢所有提供免费影视接口的站点。
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=MoonTechLab/LunaTV&type=Date)](https://www.star-history.com/#MoonTechLab/LunaTV&Date)
