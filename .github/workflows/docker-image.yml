@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  REGISTRY_IMAGE: moontechlab/lunatv
+  REGISTRY_IMAGE: heardic/moontv
 
 permissions:
   contents: write
