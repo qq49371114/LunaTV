@@ -38,6 +38,7 @@ import {
   Video,
 } from 'lucide-react';
 import { GripVertical } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -4492,6 +4493,7 @@ const LiveSourceConfig = ({
 function AdminPageClient() {
   const { alertModal, showAlert, hideAlert } = useAlertModal();
   const { isLoading, withLoading } = useLoadingState();
+   const router = useRouter();
   const [config, setConfig] = useState<AdminConfig | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -4614,6 +4616,13 @@ function AdminPageClient() {
               >
                 重置配置
               </button>
+              <button
+              onClick={() => router.push('/config')}
+              className='px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded-md transition-colors flex items-center gap-1'
+            >
+              <Tv size={14} />
+              <span>TVBox 配置</span>
+            </button>
             )}
           </div>
 
