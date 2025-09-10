@@ -4616,6 +4616,7 @@ function AdminPageClient() {
               >
                 重置配置
               </button>
+              )}
               <button
               onClick={() => router.push('/config')}
               className='px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded-md transition-colors flex items-center gap-1'
