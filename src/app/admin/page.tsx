@@ -4624,7 +4624,6 @@ function AdminPageClient() {
               <Tv size={14} />
               <span>TVBox 配置</span>
             </button>
-            )}
           </div>
 
           {/* 配置文件标签 - 仅站长可见 */}
