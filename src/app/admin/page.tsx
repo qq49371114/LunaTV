@@ -778,9 +778,9 @@ const UserConfig = ({ config, role, refreshConfig }: UserConfigProps) => {
     );
   }
 
+  {/* 用户统计 */}
   return (
-    <div className='space-y-6'>
-      {/* 用户统计 */}
+    <div className='space-y-6'> 
       <div>
         <h4 className='text-sm font-medium text-gray-700 dark:text-gray-300 mb-3'>
           用户统计
