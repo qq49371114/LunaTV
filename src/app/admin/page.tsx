@@ -1712,7 +1712,7 @@ const UserConfig = ({ config, role, refreshConfig }: UserConfigProps) => {
       <label key={source.key} className='flex items-center space-x-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors'>
         <input
           type='checkbox'
-          checked={editingUserGroup.enabledApis.includes(source.key)}
+          checked={editingUserGroup?.enabledApis.includes(source.key)}
           onChange={(e) => {
             if (e.target.checked) {
               setEditingUserGroup(prev => prev ? {
