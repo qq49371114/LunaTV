@@ -290,7 +290,6 @@ interface LiveDataSource {
   channelNumber?: number;
   disabled?: boolean;
   from: 'config' | 'custom';
-  adult?: boolean;  // ← 在这里添加这一行
 }
 
 // 自定义分类数据类型
@@ -1331,124 +1330,87 @@ const UserConfig = ({ config, role, refreshConfig }: UserConfigProps) => {
               </div>
 
               {/* 采集源选择 - 多列布局 */}
-<div className='mb-6'>
-  <div className='flex items-center justify-between mb-4'>
-    <h4 className='text-sm font-medium text-gray-700 dark:text-gray-300'>
-      选择可用的采集源：
-    </h4>
-    {/* 快速操作按钮组 */}
-    <div className='flex space-x-2'>
-      <button
-        onClick={() => {
-          const adultApis = config?.SourceConfig?.filter(s => s.adult).map(s => s.key) || [];
-          setSelectedApis([...new Set([...selectedApis, ...adultApis])]);
-        }}
-        className='px-2 py-1 text-xs bg-purple-100 text-purple-800 hover:bg-purple-200 dark:bg-purple-900/40 dark:text-purple-200 dark:hover:bg-purple-900/60 rounded transition-colors'
-        type='button'
-      >
-        + 成人线路
-      </button>
-      <button
-        onClick={() => {
-          const adultApis = config?.SourceConfig?.filter(s => s.adult).map(s => s.key) || [];
-          setSelectedApis(selectedApis.filter(api => !adultApis.includes(api)));
-        }}
-        className='px-2 py-1 text-xs bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-900/40 dark:text-red-200 dark:hover:bg-red-900/60 rounded transition-colors'
-        type='button'
-      >
-        - 成人线路
-      </button>
-      <button
-        onClick={() => {
-          const adultApis = config?.SourceConfig?.filter(s => s.adult).map(s => s.key) || [];
-          setSelectedApis(adultApis);
-        }}
-        className='px-2 py-1 text-xs bg-yellow-100 text-yellow-800 hover:bg-yellow-200 dark:bg-yellow-900/40 dark:text-yellow-200 dark:hover:bg-yellow-900/60 rounded transition-colors'
-        type='button'
-      >
-        仅成人
-      </button>
-    </div>
-  </div>
-  <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-    {config?.SourceConfig?.map((source) => (
-      <label key={source.key} className='flex items-center space-x-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors'>
-        <input
-          type='checkbox'
-          checked={selectedApis.includes(source.key)}
-          onChange={(e) => {
-            if (e.target.checked) {
-              setSelectedApis([...selectedApis, source.key]);
-            } else {
-              setSelectedApis(selectedApis.filter(api => api !== source.key));
-            }
-          }}
-          className='rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700'
-        />
-        <div className='flex-1 min-w-0'>
-          <div className='text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center space-x-2'>
-            <span className='truncate'>{source.name}</span>
-            {source.adult && (
-              <span className='px-1.5 py-0.5 text-[10px] bg-red-100 text-red-800 rounded dark:bg-red-900/40 dark:text-red-200'>
-                成人
-              </span>
-            )}
-          </div>
-          {source.api && (
-            <div className='text-xs text-gray-500 dark:text-gray-400 truncate'>
-              {extractDomain(source.api)}
+              <div className='mb-6'>
+                <h4 className='text-sm font-medium text-gray-700 dark:text-gray-300 mb-4'>
+                  选择可用的采集源：
+                </h4>
+                <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+                  {config?.SourceConfig?.map((source) => (
+                    <label key={source.key} className='flex items-center space-x-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors'>
+                      <input
+                        type='checkbox'
+                        checked={selectedApis.includes(source.key)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedApis([...selectedApis, source.key]);
+                          } else {
+                            setSelectedApis(selectedApis.filter(api => api !== source.key));
+                          }
+                        }}
+                        className='rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700'
+                      />
+                      <div className='flex-1 min-w-0'>
+                        <div className='text-sm font-medium text-gray-900 dark:text-gray-100 truncate'>
+                          {source.name}
+                        </div>
+                        {source.api && (
+                          <div className='text-xs text-gray-500 dark:text-gray-400 truncate'>
+                            {extractDomain(source.api)}
+                          </div>
+                        )}
+                      </div>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* 快速操作按钮 */}
+              <div className='flex flex-wrap items-center justify-between mb-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg'>
+                <div className='flex space-x-2'>
+                  <button
+                    onClick={() => setSelectedApis([])}
+                    className={buttonStyles.quickAction}
+                  >
+                    全不选（无限制）
+                  </button>
+                  <button
+                    onClick={() => {
+                      const allApis = config?.SourceConfig?.filter(source => !source.disabled).map(s => s.key) || [];
+                      setSelectedApis(allApis);
+                    }}
+                    className={buttonStyles.quickAction}
+                  >
+                    全选
+                  </button>
+                </div>
+                <div className='text-sm text-gray-600 dark:text-gray-400'>
+                  已选择：<span className='font-medium text-blue-600 dark:text-blue-400'>
+                    {selectedApis.length > 0 ? `${selectedApis.length} 个源` : '无限制'}
+                  </span>
+                </div>
+              </div>
+
+              {/* 操作按钮 */}
+              <div className='flex justify-end space-x-3'>
+                <button
+                  onClick={() => {
+                    setShowConfigureApisModal(false);
+                    setSelectedUser(null);
+                    setSelectedApis([]);
+                  }}
+                  className={`px-6 py-2.5 text-sm font-medium ${buttonStyles.secondary}`}
+                >
+                  取消
+                </button>
+                <button
+                  onClick={handleSaveUserApis}
+                  disabled={isLoading(`saveUserApis_${selectedUser?.username}`)}
+                  className={`px-6 py-2.5 text-sm font-medium ${isLoading(`saveUserApis_${selectedUser?.username}`) ? buttonStyles.disabled : buttonStyles.primary}`}
+                >
+                  {isLoading(`saveUserApis_${selectedUser?.username}`) ? '配置中...' : '确认配置'}
+                </button>
+              </div>
             </div>
-          )}
-        </div>
-      </label>
-    ))}
-  </div>
-
-  {/* 快速操作按钮 */}
-  <div className='flex flex-wrap items-center justify-between mb-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg'>
-    <div className='flex space-x-2'>
-      <button
-        onClick={() => setSelectedApis([])}
-        className={buttonStyles.quickAction}
-      >
-        全不选（无限制）
-      </button>
-      <button
-        onClick={() => {
-          const allApis = config?.SourceConfig?.filter(source => !source.disabled).map(s => s.key) || [];
-          setSelectedApis(allApis);
-        }}
-        className={buttonStyles.quickAction}
-      >全选</button>
-    </div>
-    <div className='text-sm text-gray-600 dark:text-gray-400'>
-      已选择：<span className='font-medium text-blue-600 dark:text-blue-400'>
-        {selectedApis.length > 0 ? `${selectedApis.length} 个源` : '无限制'}
-      </span>
-    </div>
-  </div>
-
-  {/* 操作按钮 */}
-  <div className='flex justify-end space-x-3'>
-    <button
-      onClick={() => {
-        setShowConfigureApisModal(false);
-        setSelectedUser(null);
-        setSelectedApis([]);
-      }}
-      className={`px-6 py-2.5 text-sm font-medium ${buttonStyles.secondary}`}
-    >
-      取消
-    </button>
-    <button
-      onClick={handleSaveUserApis}
-      disabled={isLoading(`saveUserApis_${selectedUser?.username}`)}
-      className={`px-6 py-2.5 text-sm font-medium ${isLoading(`saveUserApis_${selectedUser?.username}`) ? buttonStyles.disabled : buttonStyles.primary}`}
-    >
-      {isLoading(`saveUserApis_${selectedUser?.username}`) ? '配置中...' : '确认配置'}
-    </button>
-  </div>
-</div>
           </div>
         </div>,
         document.body
@@ -1497,114 +1459,64 @@ const UserConfig = ({ config, role, refreshConfig }: UserConfigProps) => {
                 </div>
 
                 {/* 可用视频源 */}
-<div>
-  <div className='flex items-center justify-between mb-4'>
-    <label className='block text-sm font-medium text-gray-700 dark:text-gray-300'>
-      可用视频源
-    </label>
-    {/* 快速操作按钮组 */}
-    <div className='flex space-x-2'>
-      <button
-        onClick={() => {
-          const adultApis = config?.SourceConfig?.filter(s => s.adult).map(s => s.key) || [];
-          setNewUserGroup(prev => ({
-            ...prev,
-            enabledApis: [...new Set([...prev.enabledApis, ...adultApis])]
-          }));
-        }}
-        className='px-2 py-1 text-xs bg-purple-100 text-purple-800 hover:bg-purple-200 dark:bg-purple-900/40 dark:text-purple-200 dark:hover:bg-purple-900/60 rounded transition-colors'
-        type='button'
-      >
-        + 成人线路
-      </button>
-      <button
-        onClick={() => {
-          const adultApis = config?.SourceConfig?.filter(s => s.adult).map(s => s.key) || [];
-          setNewUserGroup(prev => ({
-            ...prev,
-            enabledApis: prev.enabledApis.filter(api => !adultApis.includes(api))
-          }));
-        }}
-        className='px-2 py-1 text-xs bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-900/40 dark:text-red-200 dark:hover:bg-red-900/60 rounded transition-colors'
-        type='button'
-      >
-        - 成人线路
-      </button>
-      <button
-        onClick={() => {
-          const adultApis = config?.SourceConfig?.filter(s => s.adult).map(s => s.key) || [];
-          setNewUserGroup(prev => ({
-            ...prev,
-            enabledApis: adultApis
-          }));
-        }}
-        className='px-2 py-1 text-xs bg-yellow-100 text-yellow-800 hover:bg-yellow-200 dark:bg-yellow-900/40 dark:text-yellow-200 dark:hover:bg-yellow-900/60 rounded transition-colors'
-        type='button'
-      >
-        仅成人
-      </button>
-    </div>
-  </div>
-  <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3'>
-    {config?.SourceConfig?.map((source) => (
-      <label key={source.key} className='flex items-center space-x-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors'>
-        <input
-          type='checkbox'
-          checked={newUserGroup.enabledApis.includes(source.key)}
-          onChange={(e) => {
-            if (e.target.checked) {
-              setNewUserGroup(prev => ({
-                ...prev,
-                enabledApis: [...prev.enabledApis, source.key]
-              }));
-            } else {
-              setNewUserGroup(prev => ({
-                ...prev,
-                enabledApis: prev.enabledApis.filter(api => api !== source.key)
-              }));
-            }
-          }}
-          className='rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700'
-        />
-        <div className='flex-1 min-w-0'>
-          <div className='text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center space-x-2'>
-            <span className='truncate'>{source.name}</span>
-            {source.adult && (
-              <span className='px-1.5 py-0.5 text-[10px] bg-red-100 text-red-800 rounded dark:bg-red-900/40 dark:text-red-200'>
-                成人
-              </span>
-            )}
-          </div>
-          {source.api && (
-            <div className='text-xs text-gray-500 dark:text-gray-400 truncate'>
-              {extractDomain(source.api)}
-            </div>
-          )}
-        </div>
-      </label>
-    ))}
-  </div>
+                <div>
+                  <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4'>
+                    可用视频源
+                  </label>
+                  <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3'>
+                    {config?.SourceConfig?.map((source) => (
+                      <label key={source.key} className='flex items-center space-x-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors'>
+                        <input
+                          type='checkbox'
+                          checked={newUserGroup.enabledApis.includes(source.key)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setNewUserGroup(prev => ({
+                                ...prev,
+                                enabledApis: [...prev.enabledApis, source.key]
+                              }));
+                            } else {
+                              setNewUserGroup(prev => ({
+                                ...prev,
+                                enabledApis: prev.enabledApis.filter(api => api !== source.key)
+                              }));
+                            }
+                          }}
+                          className='rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700'
+                        />
+                        <div className='flex-1 min-w-0'>
+                          <div className='text-sm font-medium text-gray-900 dark:text-gray-100 truncate'>
+                            {source.name}
+                          </div>
+                          {source.api && (
+                            <div className='text-xs text-gray-500 dark:text-gray-400 truncate'>
+                              {extractDomain(source.api)}
+                            </div>
+                          )}
+                        </div>
+                      </label>
+                    ))}
+                  </div>
 
-  {/* 快速操作按钮 */}
-  <div className='mt-4 flex space-x-2'>
-    <button
-      onClick={() => setNewUserGroup(prev => ({ ...prev, enabledApis: [] }))}
-      className={buttonStyles.quickAction}
-    >
-      全不选（
-无限制）
-    </button>
-    <button
-      onClick={() => {
-        const allApis = config?.SourceConfig?.filter(source => !source.disabled).map(s => s.key) || [];
-        setNewUserGroup(prev => ({ ...prev, enabledApis: allApis }));
-      }}
-      className={buttonStyles.quickAction}
-    >
-      全选
-    </button>
-  </div>
-</div>
+                  {/* 快速操作按钮 */}
+                  <div className='mt-4 flex space-x-2'>
+                    <button
+                      onClick={() => setNewUserGroup(prev => ({ ...prev, enabledApis: [] }))}
+                      className={buttonStyles.quickAction}
+                    >
+                      全不选（无限制）
+                    </button>
+                    <button
+                      onClick={() => {
+                        const allApis = config?.SourceConfig?.filter(source => !source.disabled).map(s => s.key) || [];
+                        setNewUserGroup(prev => ({ ...prev, enabledApis: allApis }));
+                      }}
+                      className={buttonStyles.quickAction}
+                    >
+                      全选
+                    </button>
+                  </div>
+                </div>
 
                 {/* 操作按钮 */}
                 <div className='flex justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700'>
@@ -1657,116 +1569,66 @@ const UserConfig = ({ config, role, refreshConfig }: UserConfigProps) => {
                 </button>
               </div>
 
-              {/* 可用视频源 */}
-<div>
-  <div className='flex items-center justify-between mb-4'>
-    <label className='block text-sm font-medium text-gray-700 dark:text-gray-300'>
-      可用视频源
-    </label>
-    {/* 快速操作按钮组 */}
-    <div className='flex space-x-2'>
-      <button
-        onClick={() => {
-          const adultApis = config?.SourceConfig?.filter(s => s.adult).map(s => s.key) || [];
-          setEditingUserGroup(prev => prev ? {
-            ...prev,
-            enabledApis: [...new Set([...prev.enabledApis, ...adultApis])]
-          } : null);
-        }}
-        className='px-2 py-1 text-xs bg-purple-100 text-purple-800 hover:bg-purple-200 dark:bg-purple-900/40 dark:text-purple-200 dark:hover:bg-purple-900/60 rounded transition-colors'
-        type='button'
-      >
-        + 成人线路
-      </button>
-      <button
-        onClick={() => {
-          const adultApis = config?.SourceConfig?.filter(s => s.adult).map(s => s.key) || [];
-          setEditingUserGroup(prev => prev ? {
-            ...prev,
-            enabledApis: prev.enabledApis.filter(api => !adultApis.includes(api))
-          } : null);
-        }}
-        className='px-2 py-1 text-xs bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-900/40 dark:text-red-200 dark:hover:bg-red-900/60 rounded transition-colors'
-        type='button'
-      >
-        - 成人线路
-      </button>
-      <button
-        onClick={() => {
-          const adultApis = config?.SourceConfig?.filter(s => s.adult).map(s => s.key) || [];
-          setEditingUserGroup(prev => prev ? {
-            ...prev,
-            enabledApis: adultApis
-          } : null);
-        }}
-        className='px-2 py-1 text-xs bg-yellow-100 text-yellow-800 hover:bg-yellow-200 dark:bg-yellow-900/40 dark:text-yellow-200 dark:hover:bg-yellow-900/60 rounded transition-colors'
-        type='button'
-      >
-        仅成人
-      </button>
-    </div>
-  </div>
-  <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3'>
-    {config?.SourceConfig?.map((source)
-) => (
-      <label key={source.key} className='flex items-center space-x-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors'>
-        <input
-          type='checkbox'
-          checked={editingUserGroup?.enabledApis.includes(source.key)}
-          onChange={(e) => {
-            if (e.target.checked) {
-              setEditingUserGroup(prev => prev ? {
-                ...prev,
-                enabledApis: [...prev.enabledApis, source.key]
-              } : null);
-            } else {
-              setEditingUserGroup(prev => prev ? {
-                ...prev,
-                enabledApis: prev.enabledApis.filter(api => api !== source.key)
-              } : null);
-            }
-          }}
-          className='rounded border-gray-300 text-purple-600 focus:ring-purple-500 dark:border-gray-600 dark:bg-gray-700'
-        />
-        <div className='flex-1 min-w-0'>
-          <div className='text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center space-x-2'>
-            <span className='truncate'>{source.name}</span>
-            {source.adult && (
-              <span className='px-1.5 py-0.5 text-[10px] bg-red-100 text-red-800 rounded dark:bg-red-900/40 dark:text-red-200'>
-                成人
-              </span>
-            )}
-          </div>
-          {source.api && (
-            <div className='text-xs text-gray-500 dark:text-gray-400 truncate'>
-              {extractDomain(source.api)}
-            </div>
-          )}
-        </div>
-      </label>
-    ))}
-  </div>
+              <div className='space-y-6'>
+                {/* 可用视频源 */}
+                <div>
+                  <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4'>
+                    可用视频源
+                  </label>
+                  <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3'>
+                    {config?.SourceConfig?.map((source) => (
+                      <label key={source.key} className='flex items-center space-x-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors'>
+                        <input
+                          type='checkbox'
+                          checked={editingUserGroup.enabledApis.includes(source.key)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setEditingUserGroup(prev => prev ? {
+                                ...prev,
+                                enabledApis: [...prev.enabledApis, source.key]
+                              } : null);
+                            } else {
+                              setEditingUserGroup(prev => prev ? {
+                                ...prev,
+                                enabledApis: prev.enabledApis.filter(api => api !== source.key)
+                              } : null);
+                            }
+                          }}
+                          className='rounded border-gray-300 text-purple-600 focus:ring-purple-500 dark:border-gray-600 dark:bg-gray-700'
+                        />
+                        <div className='flex-1 min-w-0'>
+                          <div className='text-sm font-medium text-gray-900 dark:text-gray-100 truncate'>
+                            {source.name}
+                          </div>
+                          {source.api && (
+                            <div className='text-xs text-gray-500 dark:text-gray-400 truncate'>
+                              {extractDomain(source.api)}
+                            </div>
+                          )}
+                        </div>
+                      </label>
+                    ))}
+                  </div>
 
-  {/* 快速操作按钮 */}
-  <div className='mt-4 flex space-x-2'>
-    <button
-      onClick={() => setEditingUserGroup(prev => prev ? { ...prev, enabledApis: [] } : null)}
-      className={buttonStyles.quickAction}
-    >
-      全不选（无限制）
-    </button>
-    <button
-      onClick={() => {
-        const allApis = config?.SourceConfig?.filter(source => !source.disabled).map(s => s.key) || [];
-        setEditingUserGroup(prev => prev ? { ...prev, enabledApis: allApis } : null);
-      }}
-      className={buttonStyles.quickAction}
-    >
-      全选
-    </button>
-  </div>
-</div>
-
+                  {/* 快速操作按钮 */}
+                  <div className='mt-4 flex space-x-2'>
+                    <button
+                      onClick={() => setEditingUserGroup(prev => prev ? { ...prev, enabledApis: [] } : null)}
+                      className={buttonStyles.quickAction}
+                    >
+                      全不选（无限制）
+                    </button>
+                    <button
+                      onClick={() => {
+                        const allApis = config?.SourceConfig?.filter(source => !source.disabled).map(s => s.key) || [];
+                        setEditingUserGroup(prev => prev ? { ...prev, enabledApis: allApis } : null);
+                      }}
+                      className={buttonStyles.quickAction}
+                    >
+                      全选
+                    </button>
+                  </div>
+                </div>
 
                 {/* 操作按钮 */}
                 <div className='flex justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700'>
