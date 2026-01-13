@@ -2445,6 +2445,38 @@ const VideoSourceConfig = ({
     });
   }, []);
 
+  // ✨✨✨ 插入在这里：一键清除无效源 ✨✨✨
+  const handleClearInvalid = async () => {
+    const invalidKeys = validationResults
+      .filter(r => r.status === 'invalid' || r.status === 'no_results')
+      .map(r => r.key);
+
+    if (invalidKeys.length === 0) return;
+
+    setConfirmModal({
+      isOpen: true,
+      title: '一键清除无效源',
+      message: `检测到 ${invalidKeys.length} 个无效源，确定要全部删除吗？`,
+      onConfirm: async () => {
+        try {
+          // 直接调用批量删除
+          await withLoading('clearInvalid', () => 
+            callSourceApi({ action: 'batch_delete', keys: invalidKeys })
+          );
+          showAlert({ type: 'success', title: '清除成功', message: `已删除 ${invalidKeys.length} 个无效源` });
+          // 更新检测结果
+          setValidationResults(prev => prev.filter(r => !invalidKeys.includes(r.key)));
+        } catch (err) {
+          showAlert({ type: 'error', title: '清除失败', message: '操作失败' });
+        }
+        setConfirmModal({ isOpen: false, title: '', message: '', onConfirm: () => {}, onCancel: () => {} });
+      },
+      onCancel: () => {
+        setConfirmModal({ isOpen: false, title: '', message: '', onConfirm: () => {}, onCancel: () => {} });
+      }
+    });
+  };
+
   // 批量操作
   const handleBatchOperation = async (action: 'batch_enable' | 'batch_disable' | 'batch_delete') => {
     if (selectedSources.size === 0) {
@@ -2543,6 +2575,19 @@ const VideoSourceConfig = ({
             </>
           )}
           <div className='flex items-center gap-2 order-1 sm:order-2'>
+            {/* ✨✨✨ 新增：一键清除按钮 (只有当有无效结果时才显示) ✨✨✨ */}
+            {validationResults.length > 0 && validationResults.some(r => r.status === 'invalid' || r.status === 'no_results') && (
+              <button
+                onClick={handleClearInvalid}
+                disabled={isValidating}
+                className="px-3 py-1 text-sm font-medium bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-50 flex items-center space-x-1"
+              >
+                {/* 简单的清除图标 */}
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                <span>清除 ({validationResults.filter(r => r.status === 'invalid' || r.status === 'no_results').length})</span>
+              </button>
+            )}
+
             <button
               onClick={() => setShowValidationModal(true)}
               disabled={isValidating}
